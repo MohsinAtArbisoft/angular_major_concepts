@@ -1,0 +1,53 @@
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- CHILD COMPONENT: Profile Editor                                -->
+<!-- Receives user object via @Input (parent → child)               -->
+<!-- Uses [(ngModel)] two-way binding on form fields                -->
+<!-- Since user is passed by REFERENCE, edits here update parent!   -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+
+<ion-card>
+  <ion-card-header>
+    <ion-card-title>Child: Profile Editor</ion-card-title>
+    <ion-card-subtitle>
+      Receives data via &#64;Input — edit below and watch the parent preview update in real-time!
+    </ion-card-subtitle>
+  </ion-card-header>
+
+  <ion-card-content>
+    <!-- [(ngModel)]="user.name" is TWO-WAY binding:
+         - [ngModel]  = reads user.name into the input (component → DOM)
+         - (ngModelChange) = writes input value back to user.name (DOM → component)
+         Combined: [(ngModel)] = the "banana in a box" 🍌📦 -->
+    <ion-item>
+      <ion-input
+        label="Name"
+        label-placement="stacked"
+        [(ngModel)]="user.name"
+        placeholder="Enter name">
+      </ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-input
+        label="Email"
+        label-placement="stacked"
+        [(ngModel)]="user.email"
+        placeholder="Enter email">
+      </ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-input
+        label="Role"
+        label-placement="stacked"
+        [(ngModel)]="user.role"
+        placeholder="Enter role">
+      </ion-input>
+    </ion-item>
+
+    <!-- (click) = event binding, emits @Output to parent -->
+    <ion-button expand="block" (click)="onSave()" class="ion-margin-top">
+      Save (emits &#64;Output — more in Day 3)
+    </ion-button>
+  </ion-card-content>
+</ion-card>

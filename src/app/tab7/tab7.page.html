@@ -1,0 +1,166 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Day 8: Architecture</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+
+  <!-- Overview -->
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Angular architecture at a glance</ion-card-title>
+      <ion-card-subtitle>
+        How the framework is structured and how it updates the UI
+      </ion-card-subtitle>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-list>
+        <ion-item>
+          <ion-label>
+            <h3>Component</h3>
+            <p>Template (HTML) + Class (TS) + Metadata (selector, styles). Building block of the UI.</p>
+          </ion-label>
+        </ion-item>
+        <ion-item>
+          <ion-label>
+            <h3>Module (NgModule)</h3>
+            <p>Groups components, declares what belongs together. We use this pattern in this app.</p>
+          </ion-label>
+        </ion-item>
+        <ion-item>
+          <ion-label>
+            <h3>Change Detection</h3>
+            <p>Runs after async events (clicks, HTTP, timers) and updates the view when data changed.</p>
+          </ion-label>
+        </ion-item>
+        <ion-item>
+          <ion-label>
+            <h3>Zone.js</h3>
+            <p>Patches browser APIs (setTimeout, XHR, etc.) so Angular knows when to run change detection.</p>
+          </ion-label>
+        </ion-item>
+      </ion-list>
+    </ion-card-content>
+  </ion-card>
+
+
+  <!-- View Encapsulation (Shadow DOM) -->
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>View Encapsulation (style scoping)</ion-card-title>
+      <ion-card-subtitle>
+        Like Shadow DOM: component styles don’t leak out (by default)
+      </ion-card-subtitle>
+    </ion-card-header>
+    <ion-card-content>
+      <p>
+        By default Angular uses <strong>Emulated</strong> encapsulation: it adds a unique attribute to your component’s elements and rewrites your CSS selectors so they only apply inside that component. So each component’s styles are scoped, similar to React Native’s StyleSheet or the browser’s Shadow DOM.
+      </p>
+      <ion-list>
+        <ion-item>
+          <ion-label>
+            <h3>Emulated (default)</h3>
+            <p>Styles are scoped to the component. No real Shadow DOM; Angular emulates it with attributes.</p>
+          </ion-label>
+        </ion-item>
+        <ion-item>
+          <ion-label>
+            <h3>ShadowDom</h3>
+            <p>Uses the browser’s real Shadow DOM. True style encapsulation.</p>
+          </ion-label>
+        </ion-item>
+        <ion-item>
+          <ion-label>
+            <h3>None</h3>
+            <p>No encapsulation. Styles are global and can affect the rest of the app (see demo below).</p>
+          </ion-label>
+        </ion-item>
+      </ion-list>
+    </ion-card-content>
+  </ion-card>
+
+
+  <!-- Encapsulation demo -->
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Encapsulation demo</ion-card-title>
+      <ion-card-subtitle>
+        Scoped (Emulated) vs None — same class name, different behavior
+      </ion-card-subtitle>
+    </ion-card-header>
+    <ion-card-content>
+      <app-encapsulation-scoped></app-encapsulation-scoped>
+      <app-encapsulation-none></app-encapsulation-none>
+      <p class="encapsulation-leak">
+        This paragraph has class "encapsulation-leak". The component with encapsulation: None uses the same class, so this text is styled by that component (style leaked). The scoped component’s class does not affect this.
+      </p>
+    </ion-card-content>
+  </ion-card>
+
+
+  <!-- Change Detection -->
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Change Detection</ion-card-title>
+      <ion-card-subtitle>
+        When does Angular update the view?
+      </ion-card-subtitle>
+    </ion-card-header>
+    <ion-card-content>
+      <p>
+        After events (click, HTTP response, timer, etc.), Angular runs change detection: it walks the component tree, reads bindings (e.g. interpolation and properties), and updates the DOM where values changed. Zone.js tells Angular “something async just finished,” so it can run a check. With <strong>OnPush</strong>, a component only checks when its &#64;Inputs change or events fire from its template (and async pipe); that reduces work and is a common optimization.
+      </p>
+    </ion-card-content>
+  </ion-card>
+
+
+  <!-- Zone.js -->
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Zone.js</ion-card-title>
+      <ion-card-subtitle>
+        How Angular knows async work happened
+      </ion-card-subtitle>
+    </ion-card-header>
+    <ion-card-content>
+      <p>
+        Zone.js patches global APIs (setTimeout, setInterval, addEventListener, XMLHttpRequest, etc.). When any of these run or complete, Zone runs a “task” and can notify Angular. So when an HTTP call finishes or a timer fires, Angular runs change detection and the UI updates. React doesn’t have this: you call setState explicitly. In Angular you just update a property; Zone + change detection handle the rest (unless you use OnPush or run outside the zone).
+      </p>
+    </ion-card-content>
+  </ion-card>
+
+
+  <!-- Summary -->
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Summary</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-list>
+        <ion-item>
+          <ion-icon name="shield-checkmark-outline" slot="start" color="success"></ion-icon>
+          <ion-label>
+            <h3>View Encapsulation</h3>
+            <p>Emulated (default) = scoped styles, like Shadow DOM. Prevents style leaks.</p>
+          </ion-label>
+        </ion-item>
+        <ion-item>
+          <ion-icon name="sync-outline" slot="start" color="primary"></ion-icon>
+          <ion-label>
+            <h3>Change Detection</h3>
+            <p>Runs after async work; updates the DOM from component data.</p>
+          </ion-label>
+        </ion-item>
+        <ion-item>
+          <ion-icon name="flash-outline" slot="start" color="tertiary"></ion-icon>
+          <ion-label>
+            <h3>Zone.js</h3>
+            <p>Wraps async APIs so Angular knows when to run change detection.</p>
+          </ion-label>
+        </ion-item>
+      </ion-list>
+    </ion-card-content>
+  </ion-card>
+
+</ion-content>

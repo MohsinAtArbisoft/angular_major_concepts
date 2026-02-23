@@ -1,0 +1,197 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Day 3–4: Emitters + Services + Pipes</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <!-- DAY 3 RECAP: @Output + EventEmitter                          -->
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Day 3: &#64;Output + EventEmitter</ion-card-title>
+      <ion-card-subtitle>
+        Child → Parent communication (opposite of &#64;Input)
+      </ion-card-subtitle>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-list>
+        <ion-item>
+          <ion-icon name="arrow-down-outline" slot="start" color="primary"></ion-icon>
+          <ion-label>
+            <h3>&#64;Input = data DOWN</h3>
+            <p>[task]="task" — parent sends data to child</p>
+          </ion-label>
+        </ion-item>
+        <ion-item>
+          <ion-icon name="arrow-up-outline" slot="start" color="tertiary"></ion-icon>
+          <ion-label>
+            <h3>&#64;Output = events UP</h3>
+            <p>(deleted)="onDelete($event)" — child sends events to parent</p>
+          </ion-label>
+        </ion-item>
+      </ion-list>
+    </ion-card-content>
+  </ion-card>
+
+
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <!-- DAY 4: SERVICES + DEPENDENCY INJECTION                        -->
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Day 4: Services + DI</ion-card-title>
+      <ion-card-subtitle>
+        Shared state/logic extracted into an injectable TaskService
+      </ion-card-subtitle>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-list>
+        <ion-item>
+          <ion-icon name="cube-outline" slot="start" color="primary"></ion-icon>
+          <ion-label>
+            <h3>&#64;Injectable — marks a class for DI</h3>
+            <p>React: createContext() + Provider → Angular: &#64;Injectable()</p>
+          </ion-label>
+        </ion-item>
+        <ion-item>
+          <ion-icon name="globe-outline" slot="start" color="success"></ion-icon>
+          <ion-label>
+            <h3>providedIn: 'root' — singleton</h3>
+            <p>One instance shared across entire app (like global Context)</p>
+          </ion-label>
+        </ion-item>
+        <ion-item>
+          <ion-icon name="flash-outline" slot="start" color="tertiary"></ion-icon>
+          <ion-label>
+            <h3>constructor(public svc: TaskService)</h3>
+            <p>React: useContext(Ctx) → Angular: just add to constructor</p>
+          </ion-label>
+        </ion-item>
+      </ion-list>
+      <p>
+        <strong>Before (Day 3):</strong> All task logic lived in this component.<br/>
+        <strong>After (Day 4):</strong> Logic moved to <code>TaskService</code>.
+        This component just coordinates between child events and the service.
+      </p>
+    </ion-card-content>
+  </ion-card>
+
+
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <!-- DAY 4: PIPES                                                  -->
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Day 4: Pipes</ion-card-title>
+      <ion-card-subtitle>
+        Transform data in templates | React: helper functions → Angular: pipes
+      </ion-card-subtitle>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-list>
+        <ion-item>
+          <ion-label>
+            <p>Built-in: date</p>
+            <h3>{{ now | date:'medium' }}</h3>
+          </ion-label>
+        </ion-item>
+        <ion-item>
+          <ion-label>
+            <p>Built-in: uppercase</p>
+            <h3>{{ 'hello angular' | uppercase }}</h3>
+          </ion-label>
+        </ion-item>
+        <ion-item>
+          <ion-label>
+            <p>Built-in: currency</p>
+            <h3>{{ 42.5 | currency:'USD' }}</h3>
+          </ion-label>
+        </ion-item>
+        <ion-item>
+          <ion-label>
+            <p>Chained: uppercase + slice</p>
+            <h3>{{ 'hello angular pipes' | uppercase | slice:0:13 }}</h3>
+          </ion-label>
+        </ion-item>
+        <ion-item>
+          <ion-label>
+            <p>Custom: timeAgo (our own pipe!)</p>
+            <h3>{{ now | timeAgo }}</h3>
+          </ion-label>
+        </ion-item>
+      </ion-list>
+    </ion-card-content>
+  </ion-card>
+
+
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <!-- CHILD #1: TaskFormComponent                                   -->
+  <!-- Emits: (taskAdded) → parent handler → TaskService.addTask()   -->
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <app-task-form (taskAdded)="onTaskAdded($event)"></app-task-form>
+
+
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <!-- TASK LIST — now powered by TaskService (injected via DI)      -->
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Tasks (from TaskService)</ion-card-title>
+      <ion-card-subtitle>
+        {{ taskService.pendingCount }} pending · {{ taskService.completedCount }} completed
+      </ion-card-subtitle>
+    </ion-card-header>
+    <ion-card-content>
+      <p>
+        State is managed by <code>TaskService</code> (injected via DI), not this component.
+        The &#64;Output pattern still works — events flow up, then the parent delegates to the service.
+      </p>
+    </ion-card-content>
+  </ion-card>
+
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <!-- CHILD #2: TaskItemComponent (one per task via *ngFor)         -->
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <ion-list>
+    <app-task-item
+      *ngFor="let task of taskService.getTasks()"
+      [task]="task"
+      (toggled)="onTaskToggled($event)"
+      (deleted)="onTaskDeleted($event)">
+    </app-task-item>
+
+    <ion-item *ngIf="taskService.getTasks().length === 0">
+      <ion-label color="medium" class="ion-text-center">
+        No tasks yet — add one above!
+      </ion-label>
+    </ion-item>
+  </ion-list>
+
+
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <!-- EVENT LOG — from TaskService                                  -->
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Event Log</ion-card-title>
+      <ion-card-subtitle>
+        Every event processed by TaskService appears here
+      </ion-card-subtitle>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-list>
+        <ion-item *ngFor="let entry of taskService.getEventLog()">
+          <ion-icon name="flash-outline" slot="start" color="tertiary"></ion-icon>
+          <ion-label class="event-log-entry">{{ entry }}</ion-label>
+        </ion-item>
+        <ion-item *ngIf="taskService.getEventLog().length === 0">
+          <ion-label color="medium">No events yet — interact with the tasks above</ion-label>
+        </ion-item>
+      </ion-list>
+    </ion-card-content>
+  </ion-card>
+
+</ion-content>

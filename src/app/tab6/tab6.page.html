@@ -1,0 +1,64 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Day 7: Routing</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Routing and data passing</ion-card-title>
+      <ion-card-subtitle>
+        Route params, query params, and navigation state
+      </ion-card-subtitle>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-list>
+        <ion-item>
+          <ion-label>
+            <h3>Route params</h3>
+            <p>URL: /tabs/user/1 → :id = 1. Read via ActivatedRoute.paramMap.</p>
+          </ion-label>
+        </ion-item>
+        <ion-item>
+          <ion-label>
+            <h3>Query params</h3>
+            <p>URL: ?from=list. Read via ActivatedRoute.queryParams.</p>
+          </ion-label>
+        </ion-item>
+        <ion-item>
+          <ion-label>
+            <h3>State (extras)</h3>
+            <p>Pass state in navigate second arg. Read via history.state.</p>
+          </ion-label>
+        </ion-item>
+        <ion-item>
+          <ion-label>
+            <h3>Declarative vs programmatic</h3>
+            <p>routerLink in template vs router.navigate() in code.</p>
+          </ion-label>
+        </ion-item>
+      </ion-list>
+    </ion-card-content>
+  </ion-card>
+
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Try it</ion-card-title>
+      <ion-card-subtitle>
+        Go to HTTP tab, fetch users, then tap a user to open the detail route.
+      </ion-card-subtitle>
+    </ion-card-header>
+    <ion-card-content>
+      <p>Or use the links below (user detail will fetch by id):</p>
+      <ion-button expand="block" [routerLink]="['/tabs/user', 1]">
+        routerLink to User 1
+      </ion-button>
+      <ion-button expand="block" (click)="goToUser(2)">
+        navigate() to User 2 (with queryParam)
+      </ion-button>
+    </ion-card-content>
+  </ion-card>
+
+</ion-content>

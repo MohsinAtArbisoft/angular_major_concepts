@@ -1,0 +1,81 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button (click)="goBack()">
+        <ion-icon name="arrow-back"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>Day 7: User Detail</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+
+  <!-- Route / query / state info -->
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Routing data</ion-card-title>
+      <ion-card-subtitle>
+        Params, queryParams, and state (from ActivatedRoute / Router)
+      </ion-card-subtitle>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-list>
+        <ion-item>
+          <ion-label>
+            <h3>Route param (id)</h3>
+            <p>{{ routeId ?? '—' }}</p>
+          </ion-label>
+        </ion-item>
+        <ion-item>
+          <ion-label>
+            <h3>Query param (from)</h3>
+            <p>{{ queryFrom ?? '—' }}</p>
+          </ion-label>
+        </ion-item>
+        <ion-item>
+          <ion-label>
+            <h3>State (user passed via navigate)</h3>
+            <p>{{ stateUser ? 'Yes' : 'No' }}</p>
+          </ion-label>
+        </ion-item>
+      </ion-list>
+    </ion-card-content>
+  </ion-card>
+
+  <!-- User detail -->
+  <ion-card *ngIf="!loading && user">
+    <ion-card-header>
+      <ion-card-title>{{ user.name }}</ion-card-title>
+      <ion-card-subtitle>{{ user.email }}</ion-card-subtitle>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-item lines="none">
+        <ion-avatar slot="start">
+          <img [src]="'https://i.pravatar.cc/128?u=' + user.id" [alt]="user.name" />
+        </ion-avatar>
+        <ion-label>
+          <p><strong>&#64;{{ user.username }}</strong></p>
+          <p *ngIf="user.phone">{{ user.phone }}</p>
+          <p *ngIf="user?.company">{{ user.company?.name }}</p>
+          <p *ngIf="user?.address">{{ user.address?.city }}</p>
+        </ion-label>
+      </ion-item>
+    </ion-card-content>
+  </ion-card>
+
+  <ion-card *ngIf="!loading && !user">
+    <ion-card-content>
+      <p class="ion-text-center" color="medium">User not found.</p>
+    </ion-card-content>
+  </ion-card>
+
+  <p *ngIf="loading" class="ion-text-center">
+    <ion-spinner name="crescent"></ion-spinner> Loading...
+  </p>
+
+  <ion-button expand="block" (click)="goBack()">
+    Back to HTTP tab
+  </ion-button>
+
+</ion-content>

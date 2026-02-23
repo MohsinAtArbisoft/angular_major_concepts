@@ -1,0 +1,29 @@
+<ion-item-sliding>
+  <ion-item [color]="task.completed ? 'light' : ''">
+    <ion-checkbox
+      slot="start"
+      [checked]="task.completed"
+      (ionChange)="onToggle()">
+    </ion-checkbox>
+
+    <ion-label [class.completed-task]="task.completed">
+      <h3>{{ task.title }}</h3>
+      <p>{{ task.completed ? 'Done' : 'Pending' }} · {{ task.createdAt | timeAgo }}</p>
+    </ion-label>
+
+    <ion-button
+      slot="end"
+      fill="clear"
+      color="danger"
+      (click)="onDelete()">
+      <ion-icon name="trash-outline"></ion-icon>
+    </ion-button>
+  </ion-item>
+
+  <!-- Slide option (swipe left to reveal) -->
+  <ion-item-options side="end">
+    <ion-item-option color="danger" (click)="onDelete()">
+      <ion-icon slot="icon-only" name="trash"></ion-icon>
+    </ion-item-option>
+  </ion-item-options>
+</ion-item-sliding>

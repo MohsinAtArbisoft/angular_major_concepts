@@ -1,0 +1,28 @@
+<ion-card>
+  <ion-card-header>
+    <ion-card-title>Add Task (Child Component)</ion-card-title>
+    <ion-card-subtitle>
+      Emits a "taskAdded" event to the parent when you submit
+    </ion-card-subtitle>
+  </ion-card-header>
+
+  <ion-card-content>
+    <ion-item>
+      <ion-input
+        label="New Task"
+        label-placement="stacked"
+        [(ngModel)]="taskTitle"
+        placeholder="What needs to be done?"
+        (keyup.enter)="addTask()">
+      </ion-input>
+    </ion-item>
+
+    <ion-button
+      expand="block"
+      (click)="addTask()"
+      [disabled]="!taskTitle.trim()"
+      class="ion-margin-top">
+      Add Task (emits event to parent)
+    </ion-button>
+  </ion-card-content>
+</ion-card>

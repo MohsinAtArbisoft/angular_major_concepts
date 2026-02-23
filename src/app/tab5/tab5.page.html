@@ -1,0 +1,150 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Day 6: HTTP Client</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <!-- CONCEPT: HttpClient returns Observables                       -->
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>HttpClient returns Observables</ion-card-title>
+      <ion-card-subtitle>
+        Not Promises — so we use .subscribe() or | async
+      </ion-card-subtitle>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-list>
+        <ion-item>
+          <ion-icon name="logo-react" slot="start" color="medium"></ion-icon>
+          <ion-label>
+            <h3>React / fetch</h3>
+            <p>fetch(url).then(r =&gt; r.json()).then(setData)</p>
+          </ion-label>
+        </ion-item>
+        <ion-item>
+          <ion-icon name="infinite-outline" slot="start" color="primary"></ion-icon>
+          <ion-label>
+            <h3>Angular / HttpClient</h3>
+            <p>http.get(url).pipe(...).subscribe(data =&gt; ...)</p>
+            <p>Or: users$ = http.get(url); then (users$ | async)</p>
+          </ion-label>
+        </ion-item>
+      </ion-list>
+      <p>
+        We use <strong>JSONPlaceholder</strong> (no API key). The service calls
+        <code>https://jsonplaceholder.typicode.com/users</code> and returns
+        <code>Observable&lt;ApiUser[]&gt;</code>.
+      </p>
+    </ion-card-content>
+  </ion-card>
+
+
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <!-- FETCH BUTTON + LOADING + RESULTS                              -->
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Fetch users</ion-card-title>
+      <ion-card-subtitle>
+        Click to trigger an HTTP GET. Loading state uses finalize().
+      </ion-card-subtitle>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-button
+        expand="block"
+        (click)="onFetch()"
+        [disabled]="loading">
+        <ion-spinner *ngIf="loading" name="crescent"></ion-spinner>
+        <span *ngIf="!loading">Fetch users from API</span>
+        <span *ngIf="loading">Loading...</span>
+      </ion-button>
+
+      <p *ngIf="users.length === 0 && !loading && !errorMessage" class="ion-text-center ion-padding" color="medium">
+        Click the button above to load users from JSONPlaceholder.
+      </p>
+      <p *ngIf="errorMessage" class="ion-text-center ion-padding" color="danger">
+        {{ errorMessage }}
+      </p>
+    </ion-card-content>
+  </ion-card>
+
+
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <!-- RESULTS                                                       -->
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <ion-card *ngIf="users.length > 0 || loading">
+    <ion-card-header>
+      <ion-card-title>Results</ion-card-title>
+      <ion-card-subtitle>
+        Data from subscribe() — stored in component and bound here
+      </ion-card-subtitle>
+    </ion-card-header>
+    <ion-card-content>
+      <p *ngIf="loading" class="ion-text-center" color="medium">
+        <ion-spinner name="crescent"></ion-spinner> Loading users...
+      </p>
+      <ion-list *ngIf="!loading && users.length > 0">
+        <ion-item *ngFor="let user of users" [routerLink]="['/tabs/user', user.id]" button detail>
+          <ion-avatar slot="start">
+            <img [src]="'https://i.pravatar.cc/64?u=' + user.id" [alt]="user.name" />
+          </ion-avatar>
+          <ion-label>
+            <h2>{{ user.name }}</h2>
+            <p>{{ user.email }}</p>
+            <p *ngIf="user?.company">{{ user.company?.name }}</p>
+          </ion-label>
+          <ion-button slot="end" fill="clear" (click)="goToUserWithState(user); $event.stopPropagation()">
+            With state
+          </ion-button>
+        </ion-item>
+      </ion-list>
+      <p class="ion-padding-horizontal" color="medium">
+        <small>Tap a row (route param only) or &quot;With state&quot; (param + query + state).</small>
+      </p>
+      <p *ngIf="!loading && users.length === 0 && !errorMessage" color="medium">No users returned (check network).</p>
+    </ion-card-content>
+  </ion-card>
+
+
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <!-- CHEAT SHEET                                                   -->
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>HttpClient + RxJS</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-list>
+        <ion-item>
+          <ion-label>
+            <h3>get / post / put / delete</h3>
+            <p>All return Observable. Use .pipe() for operators.</p>
+          </ion-label>
+        </ion-item>
+        <ion-item>
+          <ion-label>
+            <h3>catchError</h3>
+            <p>Handle errors without breaking the stream (e.g. return of([])).</p>
+          </ion-label>
+        </ion-item>
+        <ion-item>
+          <ion-label>
+            <h3>finalize</h3>
+            <p>Run logic when stream completes (success or error) — e.g. loading = false.</p>
+          </ion-label>
+        </ion-item>
+        <ion-item>
+          <ion-label>
+            <h3>switchMap (with search)</h3>
+            <p>Cancel previous request when a new one starts — used with typeahead/HTTP.</p>
+          </ion-label>
+        </ion-item>
+      </ion-list>
+    </ion-card-content>
+  </ion-card>
+
+</ion-content>

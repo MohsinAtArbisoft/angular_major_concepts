@@ -1,0 +1,239 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Day 5: Observables</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <!-- CONCEPT: Observable vs Promise                                -->
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Observable vs Promise</ion-card-title>
+      <ion-card-subtitle>
+        A stream of values over time (not just one)
+      </ion-card-subtitle>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-list>
+        <ion-item>
+          <ion-icon name="checkmark-circle-outline" slot="start" color="medium"></ion-icon>
+          <ion-label>
+            <h3>Promise (React)</h3>
+            <p>One value, eager, can't cancel</p>
+          </ion-label>
+        </ion-item>
+        <ion-item>
+          <ion-icon name="infinite-outline" slot="start" color="primary"></ion-icon>
+          <ion-label>
+            <h3>Observable (Angular)</h3>
+            <p>Many values, lazy, cancelable, chainable operators</p>
+          </ion-label>
+        </ion-item>
+      </ion-list>
+      <div class="code-block">Promise:   ──── value ──|  (one shot)
+Observable: ── v1 ── v2 ── v3 ── v4 ──▶  (stream)</div>
+    </ion-card-content>
+  </ion-card>
+
+
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <!-- SECTION 1: Timer Observable with | async pipe                 -->
+  <!--                                                               -->
+  <!-- interval(1000) emits 0, 1, 2, 3... every second               -->
+  <!-- | async subscribes in the template AND auto-unsubscribes      -->
+  <!--                                                               -->
+  <!-- React: useState + useEffect + setInterval + cleanup           -->
+  <!-- Angular: one line → {{ timer$ | async }}                      -->
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>1. Timer + | async pipe</ion-card-title>
+      <ion-card-subtitle>
+        interval(1000) emits 0, 1, 2... every second — | async auto-subscribes
+      </ion-card-subtitle>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-item>
+        <ion-icon name="time-outline" slot="start" color="primary"></ion-icon>
+        <ion-label>
+          <h2 class="highlight">{{ timer$ | async }} seconds</h2>
+          <p>This counter runs from an Observable stream</p>
+        </ion-label>
+      </ion-item>
+
+      <div class="code-block">// Component class:
+timer$ = interval(1000);
+
+// Template uses: timer$ | async
+// No subscribe. No unsubscribe.
+// The async pipe handles everything.</div>
+
+      <p>
+        <strong>React equivalent</strong> would need: <code>useState</code> +
+        <code>useEffect</code> + <code>setInterval</code> + cleanup return.
+        Angular does it in one line with <code>| async</code>.
+      </p>
+    </ion-card-content>
+  </ion-card>
+
+
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <!-- SECTION 2: Live Search with debounce                          -->
+  <!--                                                               -->
+  <!-- BehaviorSubject → debounceTime → distinctUntilChanged → map   -->
+  <!-- This is the "aha!" moment for Observables.                    -->
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>2. Live Search (the power of RxJS)</ion-card-title>
+      <ion-card-subtitle>
+        Type below — notice the 300ms debounce before results update
+      </ion-card-subtitle>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-item>
+        <ion-input
+          label="Search:"
+          label-placement="stacked"
+          placeholder="Try 'ang', 'react', 'obs'..."
+          (ionInput)="onSearch($event)">
+        </ion-input>
+      </ion-item>
+
+      <div class="code-block">searchSubject.pipe(
+  debounceTime(300),       // Wait 300ms
+  distinctUntilChanged(),  // Skip same term
+  map(term =&gt; filter(term)) // Filter items
+);</div>
+
+      <!-- Raw keystrokes vs debounced output -->
+      <ion-item *ngIf="rawKeystrokes.length > 0">
+        <ion-label>
+          <p>Raw keystrokes (every key):</p>
+          <h3>{{ rawKeystrokes.join(' → ') }}</h3>
+        </ion-label>
+      </ion-item>
+
+      <p *ngIf="rawKeystrokes.length > 0">
+        <small>
+          debounceTime(300) waits until you STOP typing for 300ms,
+          then emits once. This prevents firing on every keystroke.
+        </small>
+      </p>
+    </ion-card-content>
+  </ion-card>
+
+  <!-- Search results — subscribed via | async -->
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Results (via | async)</ion-card-title>
+      <ion-card-subtitle>
+        Subscribed with: *ngFor="let item of searchResults$ | async"
+      </ion-card-subtitle>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-list>
+        <ion-item *ngFor="let item of searchResults$ | async">
+          <ion-icon name="code-slash-outline" slot="start" color="primary"></ion-icon>
+          <ion-label>{{ item }}</ion-label>
+        </ion-item>
+      </ion-list>
+    </ion-card-content>
+  </ion-card>
+
+
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <!-- SECTION 3: Manual subscribe vs | async                        -->
+  <!-- Shows WHY | async is preferred                                -->
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>3. Manual .subscribe() vs | async</ion-card-title>
+      <ion-card-subtitle>
+        Both work, but | async is safer — it auto-cleans up
+      </ion-card-subtitle>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-list>
+        <ion-item>
+          <ion-icon name="warning-outline" slot="start" color="warning"></ion-icon>
+          <ion-label>
+            <h3>Manual: {{ manualTimerValue }} seconds</h3>
+            <p>Requires .subscribe() in ngOnInit + .unsubscribe() in ngOnDestroy</p>
+          </ion-label>
+        </ion-item>
+        <ion-item>
+          <ion-icon name="checkmark-circle-outline" slot="start" color="success"></ion-icon>
+          <ion-label>
+            <h3>| async: {{ timer$ | async }} seconds</h3>
+            <p>Auto-subscribes, auto-unsubscribes. No cleanup code needed!</p>
+          </ion-label>
+        </ion-item>
+      </ion-list>
+
+      <div class="code-block">// MANUAL (error-prone):
+// ngOnInit: subscribe to interval(1000)
+// ngOnDestroy: must call .unsubscribe()
+// Forget cleanup = memory leak!
+
+// | ASYNC (preferred):
+// Template: timer$ | async
+// That's it. Zero cleanup code.
+// Angular auto-subscribes AND auto-unsubscribes.</div>
+
+      <p>
+        <strong>Rule of thumb:</strong> Use <code>| async</code> whenever possible.
+        Only use manual <code>.subscribe()</code> when you need to trigger
+        side effects (like logging or navigation) that can't happen in the template.
+      </p>
+    </ion-card-content>
+  </ion-card>
+
+
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <!-- CHEAT SHEET                                                   -->
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>RxJS Cheat Sheet</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-list>
+        <ion-item>
+          <ion-label>
+            <h3>Subject</h3>
+            <p>Observable you can push values into with .next()</p>
+          </ion-label>
+        </ion-item>
+        <ion-item>
+          <ion-label>
+            <h3>BehaviorSubject</h3>
+            <p>Subject with an initial/current value (like useState)</p>
+          </ion-label>
+        </ion-item>
+        <ion-item>
+          <ion-label>
+            <h3>pipe(operators...)</h3>
+            <p>Chain transformations: debounce, map, filter, switchMap</p>
+          </ion-label>
+        </ion-item>
+        <ion-item>
+          <ion-label>
+            <h3>| async</h3>
+            <p>Template pipe that subscribes + auto-unsubscribes</p>
+          </ion-label>
+        </ion-item>
+        <ion-item>
+          <ion-label>
+            <h3>switchMap</h3>
+            <p>Cancel previous inner Observable when new value arrives (used with HTTP)</p>
+          </ion-label>
+        </ion-item>
+      </ion-list>
+    </ion-card-content>
+  </ion-card>
+
+</ion-content>
