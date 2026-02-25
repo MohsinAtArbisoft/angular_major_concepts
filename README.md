@@ -341,4 +341,98 @@ ng test
 ng e2e
 ```
 
-**More:** [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli)
+---
+
+## Run on mobile (Android / iOS)
+
+This app uses **Capacitor** to run as a native mobile app. The same Angular/Ionic code runs in a WebView.
+
+### Prerequisites
+
+- **Node & npm** (already used for web).
+- **Android:** [Android Studio](https://developer.android.com/studio) + Android SDK (and an emulator or device).
+- **iOS (macOS only):** Xcode + Command Line Tools.
+
+### One-time setup
+
+1. **Install Capacitor** (if not already):
+
+   ```bash
+   npm install @capacitor/core @capacitor/cli @capacitor/ios @capacitor/android
+   ```
+
+2. **Initialize Capacitor** (only if you don’t already have `capacitor.config.ts`):
+
+   ```bash
+   npx cap init
+   ```
+   Use your app name and a reverse-DNS app ID (e.g. `com.yourname.angularlearning`).
+
+3. **Add platforms:**
+
+   ```bash
+   npx cap add android
+   npx cap add ios
+   ```
+   This creates the `android/` and `ios/` folders.
+
+4. **Point Capacitor at the built web app.**
+
+   Angular’s production build puts the entry point in `dist/angular-learning/browser/`. In `capacitor.config.ts` set:
+
+   ```ts
+   webDir: 'dist/angular-learning/browser'
+   ```
+
+### Build and run on device/emulator
+
+1. **Build the Angular app:**
+
+   ```bash
+   npm run build
+   ```
+
+2. **Copy the build into the native projects:**
+
+   ```bash
+   npx cap copy
+   ```
+
+3. **Open the native project and run:**
+
+   **Android:**
+   ```bash
+   npx cap open android
+   ```
+   Then in Android Studio: choose an emulator or device → Run (▶).
+
+   **iOS:**
+   ```bash
+   npx cap open ios
+   ```
+   Then in Xcode: choose a simulator or device → Run (▶).
+
+### After making changes
+
+Whenever you change Angular/HTML/CSS/TS:
+
+1. Rebuild and copy:
+   ```bash
+   npm run build
+   npx cap copy
+   ```
+2. Reload the app on the device/emulator (or run again from Android Studio / Xcode).
+
+Optional: `npx cap sync` runs copy and updates native dependencies (e.g. plugins).
+
+### Troubleshooting
+
+- **"web assets directory must contain an index.html"**  
+  Ensure `capacitor.config.ts` has `webDir: 'dist/angular-learning/browser'` and run `npm run build` before `npx cap copy`.
+
+- **Android: "Could not read script capacitor.settings.gradle"**  
+  The `android/` folder may be out of date. Remove and re-add: `rm -rf android` then `npx cap add android`. Then run `npm run build` and `npx cap copy android` again.
+
+---
+
+**More:** [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) · [Capacitor docs](https://capacitorjs.com/docs)

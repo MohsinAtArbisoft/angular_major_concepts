@@ -42,9 +42,9 @@ const MOCK_USERS: Record<string, UserProfile> = {
   },
   'user-2': {
     id: 'user-2',
-    name: 'Sara Ahmed',
+    name: 'Ahmed Raza',
     role: 'Frontend Engineer',
-    email: 'sara@example.com',
+    email: 'ahmad@example.com',
     avatarUrl: 'https://i.pravatar.cc/150?u=user-2',
   },
 };
